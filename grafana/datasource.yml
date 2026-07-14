@@ -1,0 +1,17 @@
+apiVersion: 2
+
+datasources:
+- name: Prometheus
+  type: prometheus
+  url: http://dockworld.ryburn.org:9090 
+  isDefault: true
+  access: proxy
+  editable: true
+- name: Loki
+  type: loki
+  access: proxy
+  url: http://dockworld.ryburn.org:3100
+  isDefault: false
+  editable: true
+  jsonData:
+    maxLines: 1000
