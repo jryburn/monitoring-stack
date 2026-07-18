@@ -1,0 +1,166 @@
+###############################################################################
+#                            GLOBAL CONFIG                                    #
+###############################################################################
+[agent]
+skip_processors_after_aggregators = false
+
+###############################################################################
+#                            DATA COLLECTION                                  #
+###############################################################################
+[[inputs.exec]]
+## Commands array running a python script to collect Moen Flo stats
+  commands = [["python3", "/scripts/moen_stats.py"]]
+  timeout = "10s"
+  data_format = "influx"
+  interval = "10m"
+
+# Monitors internet speed using speedtest.net service
+[[inputs.internet_speed]]
+  ## This plugin downloads many MB of data each time it is run. As such
+  ## consider setting a higher interval for this plugin to reduce the
+  ## demand on your internet connection.
+  interval = "30m"
+  
+  ## override the default metric name
+  name_override = "/internet_speed"
+
+  ## Server ID exclude filter
+  ## Allows the user to exclude or include specific server IDs received by
+  ## speedtest-go. Values in the exclude option will be skipped over. Values in
+  ## the include option are the only options that will be picked from.
+  ##
+  ## See the list of servers speedtest-go will return at:
+  ##     https://www.speedtest.net/api/js/servers?engine=js&limit=10
+  ##
+  # server_id_exclude = []
+  server_id_include = ["68610", "2391", "4557"]
+
+# SNMP MIBs to collect
+[[inputs.snmp]]
+  agents = ["192.168.0.1", "192.168.0.2"]
+  version = 2
+  community = "${SNMP_COMMUNITY}"
+  interval = "60s"
+  timeout = "10s"
+  retries = 3
+  agent_host_tag = "source"
+
+  [inputs.snmp.tags]
+    collection_type = "snmp"
+
+  # `up` measurement
+  [[inputs.snmp.field]]
+    name = "uptime"
+    # RFC1213-MIB::sysUpTime.0
+    oid = "1.3.6.1.2.1.1.3.0"
+
+###############################################################################
+#                               WATCHERS                                      #
+###############################################################################
+[[inputs.ping]]
+  interval = "10s"
+  count = 3
+  ping_interval = 1.0
+  timeout = 5.0
+  urls = ["192.168.0.1", "192.168.0.2"]
+
+  [inputs.ping.tags]
+    collection_type = "ping"
+    watcher_type = "healthcheck"
+
+# Monitor that all our containers are responding
+[[inputs.http_response]]
+  name_override = "netobs_health"
+  urls = ["http://dockworld.ryburn.org:9004/metrics"]
+  fieldexclude = ["content_length", "result_type"]
+  tagexclude = ["status_code", "result"]
+
+  [inputs.http_response.tags]
+    collection_type = "health"
+    watcher_type = "healthcheck"
+    service = "telegraf"
+
+[[inputs.http_response]]
+  name_override = "netobs_health"
+  urls = ["http://dockworld.ryburn.org:9600"]
+  response_string_match = "\"status\":\"green\""
+  fieldexclude = ["content_length", "result_type"]
+  tagexclude = ["status_code", "result"]
+
+  [inputs.http_response.tags]
+    collection_type = "http"
+    watcher_type = "healthcheck"
+    service = "logstash"
+
+[[inputs.http_response]]
+  name_override = "netobs_health"
+  urls = ["http://dockworld.ryburn.org:3001/ready"]
+  response_string_match = "ready"
+  fieldexclude = ["content_length", "result_type"]
+  tagexclude = ["status_code", "result"]
+
+ [inputs.http_response.tags]
+   collection_type = "http"
+   watcher_type = "healthcheck"
+   service = "loki"
+
+[[inputs.http_response]]
+  name_override = "netobs_health"
+  urls = ["http://dockworld.ryburn.org:3000/api/health"]
+  response_string_match = "ok"
+  fieldexclude = ["content_length", "result_type"]
+  tagexclude = ["status_code", "result"]
+
+ [inputs.http_response.tags]
+   collection_type = "http"
+   watcher_type = "healthcheck"
+   service = "grafana"
+
+[[inputs.http_response]]
+  urls = ["http://dockworld.ryburn.org:9090/-/healthy"]
+  response_string_match = "Prometheus Server is Healthy"
+  name_override = "netobs_health"
+  fieldexclude = ["content_length", "result_type"]
+  tagexclude = ["status_code", "result"]
+
+ [inputs.http_response.tags]
+   collection_type = "http"
+   watcher_type = "healthcheck"
+   service = "prometheus"
+
+
+##############################################################################
+#                            DATA NORMALIZATION                              #
+##############################################################################
+[[processors.rename]]
+  [[processors.rename.replace]]
+    tag = "agent_host"
+    dest = "device"
+
+  [[processors.rename.replace]]
+    measurement = "snmp"
+    dest = "device"
+
+  [[processors.rename.replace]]
+    tag = "url"
+    dest = "device"
+
+##############################################################################
+#                            DATA OUTPUT                                     #
+##############################################################################
+# A plugin that stores metrics in a file
+# [[outputs.file]]
+#     ## Files to write to, "stdout" is a specially handled file.
+#     files = ["stdout", "/etc/telegraf/metrics.out"]
+#     data_format = "influx" # Data format to output.
+#     influx_sort_fields = false
+
+# A plugin that can transmit metrics to an influx endpoint
+[[outputs.influxdb_v2]]
+   urls  = ["${KENTIK_API_ENDPOINT}"]
+   http_headers = {"X-CH-Auth-Email" = "${KENTIK_API_EMAIL}", "X-CH-Auth-API-Token" = "${KENTIK_API_TOKEN}"}
+   user_agent = "kentik"
+
+[[outputs.prometheus_client]]
+  # HTTP port to listen on
+  listen = ":9004"
