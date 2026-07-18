@@ -50,7 +50,7 @@ ruler:
   storage:
     type: local
     local:
-      directory: /rules
+      directory: /loki/rules
   remote_write:
     enabled: true
     client:
