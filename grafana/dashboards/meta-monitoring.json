@@ -911,7 +911,7 @@
                         {
                             "background": {
                                 "color": {
-                                    "field": "{__name__=\"netobs_health_result_code\", collection_type=\"http\", host=\"telegraf-02\", instance=\"telegraf-02:9005\", job=\"telegraf\", method=\"GET\", server=\"http://loki:3001/ready\", service=\"loki\", site=\"lab-site-02\", watcher_type=\"healthcheck\"}",
+                                    "field": "{__name__=\"netobs_health_result_code\", collection_type=\"http\", host=\"telegraf-02\", instance=\"telegraf-02:9005\", job=\"telegraf\", method=\"GET\", server=\"http://dockworld.ryburn.org:3100/ready\", service=\"loki\", site=\"lab-site-02\", watcher_type=\"healthcheck\"}",
                                     "fixed": "#D9D9D9"
                                 }
                             },
@@ -927,7 +927,7 @@
                                 },
                                 "size": 20,
                                 "text": {
-                                    "field": "{__name__=\"netobs_health_result_code\", collection_type=\"http\", host=\"telegraf-02\", instance=\"telegraf-02:9005\", job=\"telegraf\", method=\"GET\", server=\"http://loki:3001/ready\", service=\"loki\", site=\"lab-site-02\", watcher_type=\"healthcheck\"}",
+                                    "field": "{__name__=\"netobs_health_result_code\", collection_type=\"http\", host=\"telegraf-02\", instance=\"telegraf-02:9005\", job=\"telegraf\", method=\"GET\", server=\"http://dockworld.ryburn.org:3100/ready\", service=\"loki\", site=\"lab-site-02\", watcher_type=\"healthcheck\"}",
                                     "fixed": "",
                                     "mode": "field"
                                 },

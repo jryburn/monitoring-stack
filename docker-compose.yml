@@ -51,7 +51,7 @@ services:
       - /home/jryburn/monitoring-stack/loki/data:/loki
       - /home/jryburn/monitoring-stack/loki:/etc/loki
     ports:
-      - 3001:3001
+      - 3100:3100
     restart: unless-stopped
 
   logstash:

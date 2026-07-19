@@ -94,7 +94,7 @@ skip_processors_after_aggregators = false
 
 [[inputs.http_response]]
   name_override = "netobs_health"
-  urls = ["http://dockworld.ryburn.org:3001/ready"]
+  urls = ["http://dockworld.ryburn.org:3100/ready"]
   response_string_match = "ready"
   fieldexclude = ["content_length", "result_type"]
   tagexclude = ["status_code", "result"]

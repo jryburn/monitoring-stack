@@ -11,7 +11,7 @@ datasources:
 - name: Loki
   type: loki
   access: proxy
-  url: http://dockworld.ryburn.org:3001
+  url: http://dockworld.ryburn.org:3100
   isDefault: false
   editable: true
   jsonData:
