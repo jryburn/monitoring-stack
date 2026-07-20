@@ -12,48 +12,6 @@
                 "iconColor": "rgba(0, 211, 255, 1)",
                 "name": "Annotations & Alerts",
                 "type": "dashboard"
-            },
-            {
-                "datasource": {
-                    "type": "loki",
-                    "uid": "P982945308D3682D1"
-                },
-                "enable": true,
-                "expr": "{device=\"$device\"} |~ \"Enter configuration|Configured from\"",
-                "filter": {
-                    "exclude": false,
-                    "ids": [
-                        5,
-                        20,
-                        10,
-                        11,
-                        17
-                    ]
-                },
-                "hide": false,
-                "iconColor": "blue",
-                "instant": false,
-                "name": "Device Config Push"
-            },
-            {
-                "datasource": {
-                    "type": "loki",
-                    "uid": "P982945308D3682D1"
-                },
-                "enable": true,
-                "expr": "{device=\"$device\"} |~ \"Line protocol on Interface\"",
-                "filter": {
-                    "exclude": false,
-                    "ids": [
-                        20,
-                        11,
-                        17
-                    ]
-                },
-                "hide": false,
-                "iconColor": "red",
-                "instant": false,
-                "name": "Interface Flap"
             }
         ]
     },
@@ -66,25 +24,14 @@
     "panels": [
         {
             "datasource": {
-                "type": "fifemon-graphql-datasource",
-                "uid": "P6F0309FEA1DB13F7"
+                "type": "prometheus",
+                "uid": "P1809F7CD0C75ACF3"
             },
-            "description": "Device Detailed Information from Nautobot",
+            "description": "Overall Memory average usage for the device",
             "fieldConfig": {
                 "defaults": {
                     "color": {
                         "mode": "thresholds"
-                    },
-                    "custom": {
-                        "align": "auto",
-                        "cellOptions": {
-                            "type": "auto"
-                        },
-                        "filterable": false,
-                        "footer": {
-                            "reducers": []
-                        },
-                        "inspect": false
                     },
                     "mappings": [],
                     "thresholds": {
@@ -93,141 +40,138 @@
                             {
                                 "color": "green",
                                 "value": 0
-                            }
-                        ]
-                    }
-                },
-                "overrides": [
-                    {
-                        "matcher": {
-                            "id": "byName",
-                            "options": "id"
-                        },
-                        "properties": [
-                            {
-                                "id": "custom.hideFrom.viz",
-                                "value": true
-                            }
-                        ]
-                    },
-                    {
-                        "matcher": {
-                            "id": "byName",
-                            "options": "Hostname"
-                        },
-                        "properties": [
-                            {
-                                "id": "links",
-                                "value": [
-                                    {
-                                        "targetBlank": true,
-                                        "title": "Nautobot Detail",
-                                        "url": "http://network-observability.lab:8080/dcim/devices/${__data.fields.id}"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "matcher": {
-                            "id": "byName",
-                            "options": "Intended State"
-                        },
-                        "properties": [
-                            {
-                                "id": "mappings",
-                                "value": [
-                                    {
-                                        "options": {
-                                            "Active": {
-                                                "color": "light-green",
-                                                "index": 1,
-                                                "text": "Active"
-                                            },
-                                            "Retired": {
-                                                "color": "light-red",
-                                                "index": 2,
-                                                "text": "Retired"
-                                            },
-                                            "lab-active": {
-                                                "color": "light-green",
-                                                "index": 0,
-                                                "text": "Active"
-                                            }
-                                        },
-                                        "type": "value"
-                                    }
-                                ]
                             },
                             {
-                                "id": "custom.cellOptions",
-                                "value": {
-                                    "mode": "basic",
-                                    "type": "color-background"
-                                }
+                                "color": "red",
+                                "value": 80
                             }
                         ]
-                    }
-                ]
+                    },
+                    "unit": "percent"
+                },
+                "overrides": []
             },
             "gridPos": {
                 "h": 4,
-                "w": 18,
+                "w": 6,
                 "x": 0,
                 "y": 0
             },
-            "id": 7,
+            "id": 4,
             "options": {
-                "cellHeight": "sm",
-                "showHeader": true
+                "minVizHeight": 200,
+                "minVizWidth": 200,
+                "orientation": "auto",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showThresholdLabels": false,
+                "showThresholdMarkers": true,
+                "sizing": "auto"
             },
             "pluginVersion": "12.3.0",
             "targets": [
                 {
-                    "aliasBy": "",
-                    "annotationTags": "",
-                    "annotationText": "",
-                    "annotationTitle": "",
-                    "constant": 6.5,
-                    "dataPath": "devices",
                     "datasource": {
-                        "type": "fifemon-graphql-datasource",
-                        "uid": "P6F0309FEA1DB13F7"
+                        "type": "prometheus",
+                        "uid": "P1809F7CD0C75ACF3"
                     },
-                    "endTimePath": "endTime",
-                    "groupBy": "",
-                    "queryText": "query {\n  devices(name: \"$device\") {\n    id\n    name\n    role {\n      name\n    }\n    device_type {\n      manufacturer {\n        name\n      }\n      model\n    }\n    status {\n      name\n    }\n  }\n}",
+                    "disableTextWrap": false,
+                    "editorMode": "code",
+                    "expr": "(memory_used{device=\"$device\"} * 100) / (memory_used{device=\"$device\"} + memory_available{device=\"$device\"})",
+                    "fullMetaSearch": false,
+                    "includeNullMetadata": true,
+                    "instant": false,
+                    "legendFormat": "__auto",
+                    "range": true,
                     "refId": "A",
-                    "timePath": ""
+                    "useBackend": false
                 }
             ],
-            "title": "Device Details",
-            "transformations": [
-                {
-                    "id": "organize",
-                    "options": {
-                        "excludeByName": {
-                            "id": false
-                        },
-                        "includeByName": {},
-                        "indexByName": {},
-                        "renameByName": {
-                            "device_type.manufacturer.name": "Manufacturer",
-                            "device_type.model": "Model",
-                            "id": "",
-                            "name": "Hostname",
-                            "role.name": "Role",
-                            "status.name": "Intended State"
-                        }
-                    }
-                }
-            ],
-            "type": "table"
+            "title": "Avg Mem",
+            "type": "gauge"
         },
         {
             "datasource": {
                 "type": "prometheus",
                 "uid": "P1809F7CD0C75ACF3"
+            },
+            "description": "Overall CPU average usage for the device",
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "percent"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 6,
+                "x": 6,
+                "y": 0
+            },
+            "id": 3,
+            "options": {
+                "minVizHeight": 200,
+                "minVizWidth": 200,
+                "orientation": "auto",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showThresholdLabels": false,
+                "showThresholdMarkers": true,
+                "sizing": "auto"
+            },
+            "pluginVersion": "12.3.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "P1809F7CD0C75ACF3"
+                    },
+                    "disableTextWrap": false,
+                    "editorMode": "code",
+                    "expr": "avg(avg_over_time(cpu_used{device=\"$device\"}[2m]))",
+                    "fullMetaSearch": false,
+                    "includeNullMetadata": true,
+                    "instant": false,
+                    "legendFormat": "__auto",
+                    "range": true,
+                    "refId": "A",
+                    "useBackend": false
+                }
+            ],
+            "title": "Avg CPU",
+            "type": "gauge"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
             },
             "description": "Device overall state from a ping result",
             "fieldConfig": {
@@ -322,7 +266,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "P1809F7CD0C75ACF3"
+                "uid": "PBFA97CFB590B2093"
             },
             "description": "Device Uptime based on SNMP metric",
             "fieldConfig": {
@@ -395,11 +339,45 @@
                 "type": "prometheus",
                 "uid": "P1809F7CD0C75ACF3"
             },
-            "description": "Overall Memory average usage for the device",
+            "description": "CPU and Memory usage in average for available cores on the device",
             "fieldConfig": {
                 "defaults": {
                     "color": {
-                        "mode": "thresholds"
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": true,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "showValues": false,
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
                     },
                     "mappings": [],
                     "thresholds": {
@@ -420,99 +398,24 @@
                 "overrides": []
             },
             "gridPos": {
-                "h": 4,
-                "w": 6,
+                "h": 5,
+                "w": 12,
                 "x": 0,
                 "y": 4
             },
-            "id": 4,
+            "id": 10,
             "options": {
-                "minVizHeight": 200,
-                "minVizWidth": 200,
-                "orientation": "auto",
-                "reduceOptions": {
-                    "calcs": [
-                        "lastNotNull"
-                    ],
-                    "fields": "",
-                    "values": false
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
                 },
-                "showThresholdLabels": false,
-                "showThresholdMarkers": true,
-                "sizing": "auto"
-            },
-            "pluginVersion": "12.3.0",
-            "targets": [
-                {
-                    "datasource": {
-                        "type": "prometheus",
-                        "uid": "P1809F7CD0C75ACF3"
-                    },
-                    "disableTextWrap": false,
-                    "editorMode": "code",
-                    "expr": "(memory_used{device=\"$device\"} * 100) / (memory_used{device=\"$device\"} + memory_available{device=\"$device\"})",
-                    "fullMetaSearch": false,
-                    "includeNullMetadata": true,
-                    "instant": false,
-                    "legendFormat": "__auto",
-                    "range": true,
-                    "refId": "A",
-                    "useBackend": false
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "single",
+                    "sort": "none"
                 }
-            ],
-            "title": "Avg Mem",
-            "type": "gauge"
-        },
-        {
-            "datasource": {
-                "type": "prometheus",
-                "uid": "P1809F7CD0C75ACF3"
-            },
-            "description": "Overall CPU average usage for the device",
-            "fieldConfig": {
-                "defaults": {
-                    "color": {
-                        "mode": "thresholds"
-                    },
-                    "mappings": [],
-                    "thresholds": {
-                        "mode": "absolute",
-                        "steps": [
-                            {
-                                "color": "green",
-                                "value": 0
-                            },
-                            {
-                                "color": "red",
-                                "value": 80
-                            }
-                        ]
-                    },
-                    "unit": "percent"
-                },
-                "overrides": []
-            },
-            "gridPos": {
-                "h": 4,
-                "w": 6,
-                "x": 6,
-                "y": 4
-            },
-            "id": 3,
-            "options": {
-                "minVizHeight": 200,
-                "minVizWidth": 200,
-                "orientation": "auto",
-                "reduceOptions": {
-                    "calcs": [
-                        "lastNotNull"
-                    ],
-                    "fields": "",
-                    "values": false
-                },
-                "showThresholdLabels": false,
-                "showThresholdMarkers": true,
-                "sizing": "auto"
             },
             "pluginVersion": "12.3.0",
             "targets": [
@@ -521,20 +424,29 @@
                         "type": "prometheus",
                         "uid": "P1809F7CD0C75ACF3"
                     },
-                    "disableTextWrap": false,
                     "editorMode": "code",
                     "expr": "avg(avg_over_time(cpu_used{device=\"$device\"}[2m]))",
-                    "fullMetaSearch": false,
-                    "includeNullMetadata": true,
                     "instant": false,
-                    "legendFormat": "__auto",
+                    "legendFormat": "CPU Usage",
                     "range": true,
-                    "refId": "A",
-                    "useBackend": false
+                    "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "P1809F7CD0C75ACF3"
+                    },
+                    "editorMode": "code",
+                    "expr": "avg((memory_used{device=\"$device\"} * 100) / (memory_used{device=\"$device\"} + memory_available{device=\"$device\"}))",
+                    "hide": false,
+                    "instant": false,
+                    "legendFormat": "Memory Usage",
+                    "range": true,
+                    "refId": "B"
                 }
             ],
-            "title": "Avg CPU",
-            "type": "gauge"
+            "title": "CPU & Mem Usage (Avg)",
+            "type": "timeseries"
         },
         {
             "datasource": {
@@ -606,120 +518,6 @@
             ],
             "title": "Latency",
             "type": "stat"
-        },
-        {
-            "datasource": {
-                "type": "prometheus",
-                "uid": "P1809F7CD0C75ACF3"
-            },
-            "description": "CPU and Memory usage in average for available cores on the device",
-            "fieldConfig": {
-                "defaults": {
-                    "color": {
-                        "mode": "palette-classic"
-                    },
-                    "custom": {
-                        "axisBorderShow": true,
-                        "axisCenteredZero": false,
-                        "axisColorMode": "text",
-                        "axisLabel": "",
-                        "axisPlacement": "auto",
-                        "barAlignment": 0,
-                        "barWidthFactor": 0.6,
-                        "drawStyle": "line",
-                        "fillOpacity": 0,
-                        "gradientMode": "none",
-                        "hideFrom": {
-                            "legend": false,
-                            "tooltip": false,
-                            "viz": false
-                        },
-                        "insertNulls": false,
-                        "lineInterpolation": "linear",
-                        "lineWidth": 1,
-                        "pointSize": 5,
-                        "scaleDistribution": {
-                            "type": "linear"
-                        },
-                        "showPoints": "auto",
-                        "showValues": false,
-                        "spanNulls": false,
-                        "stacking": {
-                            "group": "A",
-                            "mode": "none"
-                        },
-                        "thresholdsStyle": {
-                            "mode": "off"
-                        }
-                    },
-                    "mappings": [],
-                    "thresholds": {
-                        "mode": "absolute",
-                        "steps": [
-                            {
-                                "color": "green",
-                                "value": 0
-                            },
-                            {
-                                "color": "red",
-                                "value": 80
-                            }
-                        ]
-                    },
-                    "unit": "percent"
-                },
-                "overrides": []
-            },
-            "gridPos": {
-                "h": 5,
-                "w": 12,
-                "x": 0,
-                "y": 8
-            },
-            "id": 10,
-            "options": {
-                "legend": {
-                    "calcs": [],
-                    "displayMode": "list",
-                    "placement": "bottom",
-                    "showLegend": true
-                },
-                "tooltip": {
-                    "hideZeros": false,
-                    "mode": "single",
-                    "sort": "none"
-                }
-            },
-            "pluginVersion": "12.3.0",
-            "targets": [
-                {
-                    "datasource": {
-                        "type": "prometheus",
-                        "uid": "P1809F7CD0C75ACF3"
-                    },
-                    "editorMode": "code",
-                    "expr": "avg(avg_over_time(cpu_used{device=\"$device\"}[2m]))",
-                    "instant": false,
-                    "legendFormat": "CPU Usage",
-                    "range": true,
-                    "refId": "A"
-                },
-                {
-                    "datasource": {
-                        "type": "prometheus",
-                        "uid": "P1809F7CD0C75ACF3"
-                    },
-                    "editorMode": "code",
-                    "expr": "avg((memory_used{device=\"$device\"} * 100) / (memory_used{device=\"$device\"} + memory_available{device=\"$device\"}))",
-                    "hide": false,
-                    "instant": false,
-                    "legendFormat": "Memory Usage",
-                    "range": true,
-                    "refId": "B"
-                }
-            ],
-            "title": "CPU & Mem Usage (Avg)",
-            "type": "timeseries"
         },
         {
             "datasource": {
@@ -2000,19 +1798,20 @@
                     "value": "ceos-02"
                 },
                 "datasource": {
-                    "type": "prometheus",
-                    "uid": "P1809F7CD0C75ACF3"
+                    "type": "loki",
+                    "uid": "P8E80F9AEF21F6940"
                 },
-                "definition": "label_values(device_uptime,device)",
+                "definition": "",
                 "description": "Device's name",
                 "includeAll": false,
                 "label": "Device",
                 "name": "device",
                 "options": [],
                 "query": {
-                    "qryType": 1,
-                    "query": "label_values(device_uptime,device)",
-                    "refId": "PrometheusVariableQueryEditor-VariableQuery"
+                    "label": "device",
+                    "refId": "LokiVariableQueryEditor-VariableQuery",
+                    "stream": "",
+                    "type": 1
                 },
                 "refresh": 1,
                 "regex": "",
@@ -2028,5 +1827,5 @@
     "timezone": "",
     "title": "Device Health",
     "uid": "c78e686b-138b-4deb-b6ae-3239dc10a162",
-    "version": 1
+    "version": 2
 }
